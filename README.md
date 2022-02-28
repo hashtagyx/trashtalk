@@ -2,7 +2,7 @@
 
 Usage: react-native run-android
 
-Insert/Remove Google API key at:
+Insert Google API key in these files:
 > components/GooglePlacesInput.js
 
 
