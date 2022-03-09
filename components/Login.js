@@ -5,7 +5,7 @@ import LoginScreen from "react-native-login-screen";
 const Login = ( {navigation} ) => {
  
   return (
-    <LoginScreen logoImageSource={require("../assets/log2.jpg")}
+    <LoginScreen logoImageSource={require("../assets/logo.jpg")}
       onLoginPress={() => {navigation.navigate('Home')}}
       onHaveAccountPress={() => {}}
       onEmailChange={(email) => {}}

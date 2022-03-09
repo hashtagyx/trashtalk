@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, BackHandler } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useFocusEffect } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 // import axios from 'axios';
 
 const GooglePlacesInput = ({ updateMap }) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        ref.current?.blur();
+        return true;
+      };
 
-  // const locationQuery = async (details) => {
-  //   console.log(details['place_id'])
-  //   const place_id = details['place_id']
-  //   const coordinates = await getCoordinates(place_id)
-  //   // 200 lat and lng are invalid results, suggests something wrong with API query
-  //   if (coordinates[0] === 200 && coordinates[1] === 200) {
-  //     return;
-  //   }
-  //   const lat = coordinates.latitude
-  //   const lng = coordinates.longitude
-  //   console.log(coordinates.latitude)
-  //   console.log("hi")
-  //   updateMap(lat, lng)
-  // }
-  // locationQuery().catch(e => {
-  //   console.log('Error with fetch')
-  // })
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+    }, []));
+
+  const ref = useRef();
 
   const getCoordinates = (details) => {
     const place_id = details['place_id']
@@ -29,7 +29,7 @@ const GooglePlacesInput = ({ updateMap }) => {
     var config = {
       method: 'get',
       // API KEY HERE
-      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=API_KEY_HERE',
+      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=AIzaSyAFS7Psjzui15zCtGGA8fwxjCjCFJQqp7s',
       headers: {}
     };
 
@@ -45,23 +45,54 @@ const GooglePlacesInput = ({ updateMap }) => {
       });
   }
 
+  const clearTextField = () => {
+    ref.current?.setAddressText("");
+    ref.current?.focus();
+    ref.current?.blur();
+  }
+
+  const clearTextButton = () => {
+    if (ref.current?.getAddressText().length !== 0) {
+      console.log("length")
+      console.log(ref.current?.getAddressText().length)
+      return (
+        <View style={{
+          margin: 10,
+          marginRight: 0,
+        }}>
+          <Icon
+            name="times-circle"
+            backgroundColor="transparent"
+            color="grey"
+            size={20}
+            onPress={clearTextField}
+          />
+        </View>
+      )
+    }
+  }
+
   return (
     <GooglePlacesAutocomplete
+      ref={ref}
       placeholder='Search'
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        console.log(data, details);
-      }}
+      // onPress={(data, details = null) => {
+      //   // 'details' is provided when fetchDetails = true
+      //   console.log(data, details);
+      // }}
       query={{
-        key: 'AIzaSyDXcERXgqD3QmQDIkz-KD17KLu0zRhtajw',
+        key: 'AIzaSyAFS7Psjzui15zCtGGA8fwxjCjCFJQqp7s',
         language: 'en',
         components: 'country:sg'
       }}
       enablePoweredByContainer={false}
+      renderRightButton={clearTextButton}
       onPress={getCoordinates}
+      keepResultsAfterBlur={false}
+      keyboardShouldPersistTaps={'handled'}
       styles={{
         textInputContainer: {
-          margin: 10
+          margin: 10,
         },
         textInput: {
           borderRadius: 50,

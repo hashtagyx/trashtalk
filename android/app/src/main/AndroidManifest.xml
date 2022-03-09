@@ -22,9 +22,8 @@
         </intent-filter>
       </activity>
       <meta-data
-      android:name="com.google.android.geo.API_KEY" -->
-      <!-- API KEY HERE -->
-      android:value=""/>
+      android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyAFS7Psjzui15zCtGGA8fwxjCjCFJQqp7s"/>
 
       <!-- You will also only need to add this uses-library tag -->
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>

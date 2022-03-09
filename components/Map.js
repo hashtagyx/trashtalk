@@ -3,7 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import GooglePlacesInput from './GooglePlacesInput';
-import ProgressCircle from 'react-native-progress-circle'
+import FillPercentCircle from './FillPercentCircle';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Map = () => {
     const mapRef = React.createRef();
@@ -89,36 +90,25 @@ const Map = () => {
                             latitude: marker.latitude,
                             longitude: marker.longitude
                         }}
-                    >
+                        >
+                        <Icon
+                            name='ios-trash-outline'
+                            size={40}
+                            color={marker.pinColor}
+                        />
+                    
                         <Callout tooltip>
-                            {/* <View> */}
                             <View style={styles.bubble}>
                                 <Text style={styles.name}>{marker.fillPercent}% full</Text>
                             </View>
-                            {/* </View> */}
                         </Callout>
                     </Marker>
                 ))}
             </MapView>
             <GooglePlacesInput updateMap={updateMap} />
             {displayChart &&
-                <View style={styles.bottomPanel}>
-                    <Text style={styles.fillPanelText}>
-                        Fill Chart
-                    </Text>
-                    <View style={styles.circle}>
-                        <ProgressCircle
-                            percent={fillPercent}
-                            radius={50}
-                            borderWidth={8}
-                            color="#3399FF"
-                            shadowColor="#999"
-                            bgColor="#fff"
-                        >
-                            <Text style={{ fontSize: 18 }}>{fillPercent}%</Text>
-                        </ProgressCircle>
-                    </View>
-                </View>}
+                <FillPercentCircle fillPercent={fillPercent} />
+            }
         </View>
     )
 }
