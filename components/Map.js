@@ -6,7 +6,7 @@ import GooglePlacesInput from './GooglePlacesInput';
 import FillPercentCircle from './FillPercentCircle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MapViewDirections from 'react-native-maps-directions';
-import { MarkerUnits } from 'react-native-svg';
+import firestore from "@react-native-firebase/firestore";
 
 const Map = () => {
     const mapRef = React.createRef();
@@ -24,6 +24,32 @@ const Map = () => {
     const setDisplayChartFalse = () => {
         setDisplayChart(false);
     }
+
+    const getColor = (fillPercent) => {
+        // red
+        if (fillPercent >= 75) return '#FF0000'
+        // orange
+        if (fillPercent >= 50) return '#f39c12'
+        // green
+        return '#03AC0A'
+    }
+  
+    const observer = firestore().collection('sensors').doc('sensor1').collection('current').where('fillPercent', '>', 0)
+        .onSnapshot(querySnapshot => {
+            querySnapshot.docChanges().forEach(change => {
+                if (change.type === 'modified') {
+                    const fillPercent = change.doc.data().fillPercent;
+                    const pinColor = getColor(fillPercent)
+                    console.log(fillPercent);
+                    setMarkers([{
+                        pinColor: pinColor,
+                        latitude: 1.3542705139127935,
+                        longitude: 103.68681680968172,
+                        fillPercent: fillPercent,
+                    },])
+                }
+            });
+        });
 
     // !!! want to change this to user current location from GPS
     const [region, setRegion] = useState({
@@ -48,7 +74,7 @@ const Map = () => {
 
     const [waypoints, setWaypoints] = useState([
         {
-            latitude: 1.3542705139127935, 
+            latitude: 1.3542705139127935,
             longitude: 103.68681680968172,
         },
         {
@@ -56,37 +82,37 @@ const Map = () => {
             longitude: 103.68597186884016,
         },
         {
-            latitude: 1.3527679900836764, 
-            longitude: 103.68947455572193,  
+            latitude: 1.3527679900836764,
+            longitude: 103.68947455572193,
         },
         {
-            latitude: 1.3486837191389083, 
+            latitude: 1.3486837191389083,
             longitude: 103.68676775471977,
         },
     ])
 
     const [markers, setMarkers] = useState([
         {
-            pinColor: 'blue',
-            latitude: 1.3542705139127935, 
+            pinColor: '#FF0000',
+            latitude: 1.3542705139127935,
             longitude: 103.68681680968172,
             fillPercent: 95,
         },
         {
-            pinColor: 'green',
+            pinColor: '#03AC0A',
             latitude: 1.3525529215105152,
             longitude: 103.68597186884016,
             fillPercent: 40,
         },
         {
-            pinColor: 'black',
-            latitude: 1.3527679900836764, 
+            pinColor: '#f39c12',
+            latitude: 1.3527679900836764,
             longitude: 103.68947455572193,
             fillPercent: 70,
         },
         {
-            pinColor: 'red',
-            latitude: 1.3486837191389083, 
+            pinColor: '#FF0000',
+            latitude: 1.3486837191389083,
             longitude: 103.68676775471977,
             fillPercent: 85,
         },
@@ -121,6 +147,7 @@ const Map = () => {
                         <Callout tooltip>
                             <View style={styles.bubble}>
                                 <Text style={styles.name}>{marker.fillPercent}% full</Text>
+
                             </View>
                         </Callout>
                     </Marker>
@@ -134,7 +161,7 @@ const Map = () => {
                     mode={"WALKING"}
                     apikey={'AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI'}
                     strokeWidth={5}
-                    strokeColor={'hotpink'}
+                    strokeColor={'black'}
                     lineDashPattern={[5, 5]}
                 />
             </MapView>
