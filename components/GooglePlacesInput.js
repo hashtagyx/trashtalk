@@ -29,7 +29,7 @@ const GooglePlacesInput = ({ updateMap }) => {
     var config = {
       method: 'get',
       // API KEY HERE
-      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=AIzaSyAFS7Psjzui15zCtGGA8fwxjCjCFJQqp7s',
+      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI',
       headers: {}
     };
 
@@ -81,7 +81,7 @@ const GooglePlacesInput = ({ updateMap }) => {
       //   console.log(data, details);
       // }}
       query={{
-        key: 'AIzaSyAFS7Psjzui15zCtGGA8fwxjCjCFJQqp7s',
+        key: 'AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI',
         language: 'en',
         components: 'country:sg'
       }}

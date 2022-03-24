@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, setState } from 'react'
 import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import GooglePlacesInput from './GooglePlacesInput';
 import FillPercentCircle from './FillPercentCircle';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MapViewDirections from 'react-native-maps-directions';
+import { MarkerUnits } from 'react-native-svg';
 
 const Map = () => {
     const mapRef = React.createRef();
@@ -44,30 +46,49 @@ const Map = () => {
         }, 1000)
     }
 
+    const [waypoints, setWaypoints] = useState([
+        {
+            latitude: 1.3542705139127935, 
+            longitude: 103.68681680968172,
+        },
+        {
+            latitude: 1.3525529215105152,
+            longitude: 103.68597186884016,
+        },
+        {
+            latitude: 1.3527679900836764, 
+            longitude: 103.68947455572193,  
+        },
+        {
+            latitude: 1.3486837191389083, 
+            longitude: 103.68676775471977,
+        },
+    ])
+
     const [markers, setMarkers] = useState([
         {
             pinColor: 'blue',
-            latitude: 1.3533,
-            longitude: 103.6876,
+            latitude: 1.3542705139127935, 
+            longitude: 103.68681680968172,
             fillPercent: 95,
         },
         {
             pinColor: 'green',
-            latitude: 1.3573,
-            longitude: 103.6876,
-            fillPercent: 85,
+            latitude: 1.3525529215105152,
+            longitude: 103.68597186884016,
+            fillPercent: 40,
         },
         {
-            pinColor: 'yellow',
-            latitude: 1.3543,
-            longitude: 103.6876,
-            fillPercent: 75,
+            pinColor: 'black',
+            latitude: 1.3527679900836764, 
+            longitude: 103.68947455572193,
+            fillPercent: 70,
         },
         {
             pinColor: 'red',
-            latitude: 1.3533,
-            longitude: 103.6896,
-            fillPercent: 65,
+            latitude: 1.3486837191389083, 
+            longitude: 103.68676775471977,
+            fillPercent: 85,
         },
     ])
 
@@ -78,8 +99,8 @@ const Map = () => {
                 style={styles.map}
                 initialRegion={region}
                 ref={mapRef}
-                showsMyLocationButton={true}
                 showsUserLocation={true}
+                showsMyLocationButton={false}
             >
                 {markers.map((marker, index) => (
                     <Marker
@@ -90,13 +111,13 @@ const Map = () => {
                             latitude: marker.latitude,
                             longitude: marker.longitude
                         }}
-                        >
+                    >
                         <Icon
-                            name='ios-trash-outline'
+                            name='ios-trash-sharp'
                             size={40}
                             color={marker.pinColor}
                         />
-                    
+
                         <Callout tooltip>
                             <View style={styles.bubble}>
                                 <Text style={styles.name}>{marker.fillPercent}% full</Text>
@@ -104,6 +125,18 @@ const Map = () => {
                         </Callout>
                     </Marker>
                 ))}
+                <MapViewDirections
+                    //green pointer to red pointer
+                    origin={waypoints[1]}
+                    destination={waypoints[3]}
+                    waypoints={waypoints}
+                    optimizeWaypoints={true}
+                    mode={"WALKING"}
+                    apikey={'AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI'}
+                    strokeWidth={5}
+                    strokeColor={'hotpink'}
+                    lineDashPattern={[5, 5]}
+                />
             </MapView>
             <GooglePlacesInput updateMap={updateMap} />
             {displayChart &&
