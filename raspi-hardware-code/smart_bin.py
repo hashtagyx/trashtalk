@@ -105,7 +105,7 @@ if __name__ == '__main__':
         # send the data to firestore
         now = datetime.now()
         stringNow = now.strftime("%c")
-        db.collection("sensors").doc("sensor1").collection("data").document(stringNow).set('fill' : distance))
+        db.collection("sensors").doc("sensor1").collection("data").document(stringNow).set({"fill" : distance})
         # wait for next loop
         wait = start_time + 1 - time.time()
         if wait > 0:
