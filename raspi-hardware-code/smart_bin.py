@@ -2,6 +2,14 @@
 import time
 import os
 import RPi.GPIO as GPIO
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from datetime import datetime
+
+cred = credentials.Certificate("~/git/trashtalk/trashtalk/raspi-hardware-code/serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 binCapacity = "Empty"
 
@@ -94,6 +102,10 @@ if __name__ == '__main__':
         else:
             GPIO.output(26, GPIO.LOW)
 
+	# send the data to firestore
+	now = datetime.now()
+	stringNow = now.strftime("%c)
+	db.collection("sensors").doc("sensor1").collection("data).document(stringNow).set('fill' : distance)
         # wait for next loop
         wait = start_time + 1 - time.time()
         if wait > 0:
