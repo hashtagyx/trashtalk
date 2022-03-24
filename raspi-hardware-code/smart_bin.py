@@ -7,7 +7,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from datetime import datetime
 
-cred = credentials.Certificate("~/git/trashtalk/trashtalk/raspi-hardware-code/serviceAccountKey.json")
+cred = credentials.Certificate("~/serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -105,7 +105,8 @@ if __name__ == '__main__':
         # send the data to firestore
         now = datetime.now()
         stringNow = now.strftime("%c")
-        db.collection("sensors").doc("sensor1").collection("data").document(stringNow).set({"fill" : distance})
+        db.collection("sensors").document("sensor1").collection("data").document(stringNow).set({"fill" : distance})
+        db.collection("sensors").document("sensor1").collection("current").document("mostUpdated").set({"fillPercent" : distance})
         # wait for next loop
         wait = start_time + 1 - time.time()
         if wait > 0:
