@@ -1,4 +1,4 @@
-import React, { useState, setState } from 'react'
+import React, { useState, setState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
@@ -7,9 +7,28 @@ import FillPercentCircle from './FillPercentCircle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MapViewDirections from 'react-native-maps-directions';
 import firestore from "@react-native-firebase/firestore";
+import Geolocation from 'react-native-geolocation-service';
 
 const Map = () => {
     const mapRef = React.createRef();
+
+    const getDeviceCurrentLocation = async () => {
+        return new Promise((resolve, reject) =>
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    resolve(position);
+                },
+                (error) => {
+                    reject(error);
+                },
+                {
+                    enableHighAccuracy: true, // Whether to use high accuracy mode or not
+                    timeout: 15000, // Request timeout
+                    maximumAge: 10000 // How long previous location will be cached
+                }
+            )
+        );
+    };
 
     const [displayChart, setDisplayChart] = useState(false);
 
@@ -33,23 +52,54 @@ const Map = () => {
         // green
         return '#03AC0A'
     }
-  
-    const observer = firestore().collection('sensors').doc('sensor1').collection('current').where('fillPercent', '>', 0)
-        .onSnapshot(querySnapshot => {
-            querySnapshot.docChanges().forEach(change => {
-                if (change.type === 'modified') {
-                    const fillPercent = change.doc.data().fillPercent;
-                    const pinColor = getColor(fillPercent)
-                    console.log(fillPercent);
-                    setMarkers([{
-                        pinColor: pinColor,
-                        latitude: 1.3542705139127935,
-                        longitude: 103.68681680968172,
-                        fillPercent: fillPercent,
-                    },])
+
+    useEffect(() => {
+        firestore().collection('sensors').onSnapshot(snapshot => {
+            // console.log(snapshot.docs.map(doc => ({...doc.data(), pinColor: 'black' } )))
+            const result = snapshot.docs.map(doc => doc.data())
+            const waypointsArray = []
+            for (const element of result) {
+                element.pinColor = getColor(element.fillPercent)
+                if (element.fillPercent >= 50) {
+                    waypointsArray.push({ latitude: element.latitude, longitude: element.longitude })
                 }
-            });
-        });
+            }
+            setMarkers(result)
+            setWaypoints(waypointsArray)
+            console.log(waypoints)
+        })
+    }, [])
+
+    // firestore()
+    //     .collection('sensors').doc('sensor1').collection('current').doc('mostUpdated')
+    //     .onSnapshot(querySnapshot => {
+    //         console.log('Total fill!: ', querySnapshot.data().fillPercent);
+    //         unsub();
+    //         const fillPercent = querySnapshot.data().fillPercent;
+    //         const pinColor = getColor(fillPercent)
+    //         setMarkers([{
+    //             pinColor: pinColor,
+    //             latitude: 1.3542705139127935,
+    //             longitude: 103.68681680968172,
+    //             fillPercent: fillPercent,
+    //         },])
+    //     });
+    // const observer = firestore().collection('sensors').doc('sensor1').collection('current').where('fillPercent', '>', 0)
+    //     .onSnapshot(querySnapshot => {
+    //         querySnapshot.docChanges().forEach(change => {
+    //             if (change.type === 'modified') {
+    //                 const fillPercent = change.doc.data().fillPercent;
+    //                 const pinColor = getColor(fillPercent)
+    //                 console.log(fillPercent);
+    //                 setMarkers([{
+    //                     pinColor: pinColor,
+    //                     latitude: 1.3542705139127935,
+    //                     longitude: 103.68681680968172,
+    //                     fillPercent: fillPercent,
+    //                 },])
+    //             }
+    //         });
+    //     });
 
     // !!! want to change this to user current location from GPS
     const [region, setRegion] = useState({
@@ -154,8 +204,8 @@ const Map = () => {
                 ))}
                 <MapViewDirections
                     //green pointer to red pointer
-                    origin={waypoints[1]}
-                    destination={waypoints[3]}
+                    origin={waypoints[0]}
+                    destination={waypoints[waypoints.length - 1]}
                     waypoints={waypoints}
                     optimizeWaypoints={true}
                     mode={"WALKING"}
