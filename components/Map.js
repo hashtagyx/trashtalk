@@ -1,38 +1,45 @@
 import React, { useState, setState, useEffect } from 'react'
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableHighlight } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import GooglePlacesInput from './GooglePlacesInput';
 import FillPercentCircle from './FillPercentCircle';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MapViewDirections from 'react-native-maps-directions';
 import firestore from "@react-native-firebase/firestore";
-import Geolocation from 'react-native-geolocation-service';
+import RowOfButtons from './RowOfButtons';
+// import Geolocation from 'react-native-geolocation-service';
+// import * as Location from 'expo-location';
+import GetLocation from 'react-native-get-location'
+import getDistance from 'geolib/es/getDistance'
 
 const Map = () => {
     const mapRef = React.createRef();
 
-    const getDeviceCurrentLocation = async () => {
-        return new Promise((resolve, reject) =>
-            Geolocation.getCurrentPosition(
-                (position) => {
-                    resolve(position);
-                },
-                (error) => {
-                    reject(error);
-                },
-                {
-                    enableHighAccuracy: true, // Whether to use high accuracy mode or not
-                    timeout: 15000, // Request timeout
-                    maximumAge: 10000 // How long previous location will be cached
-                }
-            )
-        );
-    };
+    // CHANGE API KEY HERE
+    const API_KEY = "AIzaSyC7UQwGGiZGV7BhWllpNAfC7T-na_zPEKM"
+
+    const [userLocation, setUserLocation] = useState(null);
 
     const [displayChart, setDisplayChart] = useState(false);
 
     const [fillPercent, setFillPercent] = useState();
+
+    const [farthestWaypoint, setFarthestWaypoint] = useState();
+
+    const [displayPath, setDisplayPath] = useState(false);
+
+    const [buttonPressed, setButtonPressed] = useState(false);
+
+    const onButtonPress = () => {
+        setButtonPressed(!buttonPressed);
+        updateMap(userLocation?.latitude, userLocation?.longitude);
+    }
+
+    const onDisplayPathButtonPress = () => {
+        setDisplayPath(!displayPath);
+    }
 
     const setDisplayChartTrue = (fillPercent) => {
         setFillPercent(fillPercent)
@@ -54,8 +61,10 @@ const Map = () => {
     }
 
     useEffect(() => {
+        if (!userLocation) return;
         firestore().collection('sensors').onSnapshot(snapshot => {
             // console.log(snapshot.docs.map(doc => ({...doc.data(), pinColor: 'black' } )))
+            console.log("Firestore called")
             const result = snapshot.docs.map(doc => doc.data())
             const waypointsArray = []
             for (const element of result) {
@@ -67,8 +76,47 @@ const Map = () => {
             setMarkers(result)
             setWaypoints(waypointsArray)
             console.log(waypoints)
+            changeFarthestPoint(waypointsArray);
         })
-    }, [])
+    }, [userLocation])
+
+    const changeFarthestPoint = (waypointsArray) => {
+        if (!waypointsArray) return;
+        if (!userLocation) return;
+        var farthest = -1
+        var farthestWaypoint = waypointsArray[0]
+        for (const waypoint of waypointsArray) {
+            console.log(userLocation, waypoint)
+            const distanceFromUser = getDistance(userLocation, waypoint)
+            if (distanceFromUser > farthest) {
+                farthest = distanceFromUser
+                farthestWaypoint = waypoint
+            }
+        }
+        console.log("Waypoints array now: ", waypoints)
+        console.log("Waypoints array ARRAY now: ", waypointsArray)
+        console.log("Farthest waypoint: ", farthestWaypoint)
+        setFarthestWaypoint(farthestWaypoint)
+    }
+
+    useEffect(() => {
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+        })
+            .then(location => {
+                console.log("Current location:" + location);
+                setUserLocation({
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                })
+            })
+            .catch(error => {
+                console.log("error here 68")
+                const { code, message } = error;
+                // console.warn(code, message);
+            })
+    }, [buttonPressed])
 
     // firestore()
     //     .collection('sensors').doc('sensor1').collection('current').doc('mostUpdated')
@@ -122,51 +170,53 @@ const Map = () => {
         }, 1000)
     }
 
-    const [waypoints, setWaypoints] = useState([
-        {
-            latitude: 1.3542705139127935,
-            longitude: 103.68681680968172,
-        },
-        {
-            latitude: 1.3525529215105152,
-            longitude: 103.68597186884016,
-        },
-        {
-            latitude: 1.3527679900836764,
-            longitude: 103.68947455572193,
-        },
-        {
-            latitude: 1.3486837191389083,
-            longitude: 103.68676775471977,
-        },
-    ])
+    const [waypoints, setWaypoints] = useState()
+    // [
+    // {
+    //     latitude: 1.3542705139127935,
+    //     longitude: 103.68681680968172,
+    // },
+    //     {
+    //         latitude: 1.3525529215105152,
+    //         longitude: 103.68597186884016,
+    //     },
+    //     {
+    //         latitude: 1.3527679900836764,
+    //         longitude: 103.68947455572193,
+    //     },
+    //     {
+    //         latitude: 1.3486837191389083,
+    //         longitude: 103.68676775471977,
+    //     },
+    // ])
 
-    const [markers, setMarkers] = useState([
-        {
-            pinColor: '#FF0000',
-            latitude: 1.3542705139127935,
-            longitude: 103.68681680968172,
-            fillPercent: 95,
-        },
-        {
-            pinColor: '#03AC0A',
-            latitude: 1.3525529215105152,
-            longitude: 103.68597186884016,
-            fillPercent: 40,
-        },
-        {
-            pinColor: '#f39c12',
-            latitude: 1.3527679900836764,
-            longitude: 103.68947455572193,
-            fillPercent: 70,
-        },
-        {
-            pinColor: '#FF0000',
-            latitude: 1.3486837191389083,
-            longitude: 103.68676775471977,
-            fillPercent: 85,
-        },
-    ])
+    const [markers, setMarkers] = useState()
+    // [
+    //     {
+    //         pinColor: '#FF0000',
+    //         latitude: 1.3542705139127935,
+    //         longitude: 103.68681680968172,
+    //         fillPercent: 95,
+    //     },
+    //     {
+    //         pinColor: '#03AC0A',
+    //         latitude: 1.3525529215105152,
+    //         longitude: 103.68597186884016,
+    //         fillPercent: 40,
+    //     },
+    //     {
+    //         pinColor: '#f39c12',
+    //         latitude: 1.3527679900836764,
+    //         longitude: 103.68947455572193,
+    //         fillPercent: 70,
+    //     },
+    //     {
+    //         pinColor: '#FF0000',
+    //         latitude: 1.3486837191389083,
+    //         longitude: 103.68676775471977,
+    //         fillPercent: 85,
+    //     },
+    // ])
 
     return (
         <View style={styles.container}>
@@ -178,7 +228,7 @@ const Map = () => {
                 showsUserLocation={true}
                 showsMyLocationButton={false}
             >
-                {markers.map((marker, index) => (
+                {markers && markers.map((marker, index) => (
                     <Marker
                         onPress={() => setDisplayChartTrue(marker.fillPercent)}
                         key={index}
@@ -202,20 +252,21 @@ const Map = () => {
                         </Callout>
                     </Marker>
                 ))}
-                <MapViewDirections
+                {waypoints && displayPath && <MapViewDirections
                     //green pointer to red pointer
-                    origin={waypoints[0]}
-                    destination={waypoints[waypoints.length - 1]}
+                    origin={userLocation}
+                    destination={farthestWaypoint}
                     waypoints={waypoints}
                     optimizeWaypoints={true}
                     mode={"WALKING"}
-                    apikey={'AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI'}
+                    apikey={API_KEY}
                     strokeWidth={5}
                     strokeColor={'black'}
                     lineDashPattern={[5, 5]}
-                />
+                />}
             </MapView>
-            <GooglePlacesInput updateMap={updateMap} />
+            <GooglePlacesInput updateMap={updateMap} API_KEY={API_KEY} />
+            <RowOfButtons onDisplayPathButtonPress={onDisplayPathButtonPress} onButtonPress={onButtonPress} />
             {displayChart &&
                 <FillPercentCircle fillPercent={fillPercent} />
             }

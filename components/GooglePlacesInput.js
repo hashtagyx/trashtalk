@@ -5,7 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 // import axios from 'axios';
 
-const GooglePlacesInput = ({ updateMap }) => {
+const GooglePlacesInput = ({ updateMap, API_KEY }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -29,7 +29,7 @@ const GooglePlacesInput = ({ updateMap }) => {
     var config = {
       method: 'get',
       // API KEY HERE
-      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI',
+      url: 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + place_id + '&fields=geometry&key=' + API_KEY,
       headers: {}
     };
 
@@ -81,7 +81,7 @@ const GooglePlacesInput = ({ updateMap }) => {
       //   console.log(data, details);
       // }}
       query={{
-        key: 'AIzaSyAAY0qESJL82dO6sbRn8unySszXcrYe1CI',
+        key: API_KEY,
         language: 'en',
         components: 'country:sg'
       }}
