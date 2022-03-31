@@ -1,24 +1,22 @@
-import React, { useState, setState, useEffect } from 'react'
-import { StyleSheet, View, Text, TouchableHighlight } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import GooglePlacesInput from './GooglePlacesInput';
 import FillPercentCircle from './FillPercentCircle';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import MapViewDirections from 'react-native-maps-directions';
 import firestore from "@react-native-firebase/firestore";
 import RowOfButtons from './RowOfButtons';
-// import Geolocation from 'react-native-geolocation-service';
-// import * as Location from 'expo-location';
 import GetLocation from 'react-native-get-location'
 import getDistance from 'geolib/es/getDistance'
+import ClearBinIcon from './ClearBinIcon';
 
 const Map = () => {
     const mapRef = React.createRef();
 
     // CHANGE API KEY HERE
-    const API_KEY = "AIzaSyC7UQwGGiZGV7BhWllpNAfC7T-na_zPEKM"
+    const API_KEY = "AIzaSyD0dx9FLxcrgczky_RYqrH2koYs0Xq_j5E"
 
     const [userLocation, setUserLocation] = useState(null);
 
@@ -66,6 +64,7 @@ const Map = () => {
             // console.log(snapshot.docs.map(doc => ({...doc.data(), pinColor: 'black' } )))
             console.log("Firestore called")
             const result = snapshot.docs.map(doc => doc.data())
+            console.log(result)
             const waypointsArray = []
             for (const element of result) {
                 element.pinColor = getColor(element.fillPercent)
@@ -230,23 +229,23 @@ const Map = () => {
             >
                 {markers && markers.map((marker, index) => (
                     <Marker
-                        onPress={() => setDisplayChartTrue(marker.fillPercent)}
+                        onPress={() => setDisplayChartTrue(marker?.fillPercent)}
                         key={index}
-                        pinColor={marker.pinColor}
+                        pinColor={marker?.pinColor}
                         coordinate={{
-                            latitude: marker.latitude,
-                            longitude: marker.longitude
+                            latitude: marker?.latitude,
+                            longitude: marker?.longitude
                         }}
                     >
                         <Icon
                             name='ios-trash-sharp'
                             size={40}
-                            color={marker.pinColor}
+                            color={marker?.pinColor}
                         />
 
                         <Callout tooltip>
                             <View style={styles.bubble}>
-                                <Text style={styles.name}>{marker.fillPercent}% full</Text>
+                                <Text style={styles.name}>{Math.round(marker?.fillPercent)}% full</Text>
 
                             </View>
                         </Callout>
@@ -265,6 +264,9 @@ const Map = () => {
                     lineDashPattern={[5, 5]}
                 />}
             </MapView>
+            {waypoints?.length > 0 &&
+                <ClearBinIcon waypoints={waypoints} updateMap={updateMap} waypointsLength={waypoints?.length} /> 
+            }
             <GooglePlacesInput updateMap={updateMap} API_KEY={API_KEY} />
             <RowOfButtons onDisplayPathButtonPress={onDisplayPathButtonPress} onButtonPress={onButtonPress} />
             {displayChart &&

@@ -76,6 +76,7 @@ const GooglePlacesInput = ({ updateMap, API_KEY }) => {
     <GooglePlacesAutocomplete
       ref={ref}
       placeholder='Search'
+      listViewDisplayed='auto'
       // onPress={(data, details = null) => {
       //   // 'details' is provided when fetchDetails = true
       //   console.log(data, details);

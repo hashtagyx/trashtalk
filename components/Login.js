@@ -12,6 +12,7 @@ const Login = ( {navigation} ) => {
       onPasswordChange={(password) => {}}
       disableSocialButtons={true} 
       haveAccountText={''}
+      logoImageStyle={{width: 150, height: 150, margin: 75}}
     />
   );
 }
