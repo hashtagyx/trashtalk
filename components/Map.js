@@ -16,7 +16,7 @@ const Map = () => {
     const mapRef = React.createRef();
 
     // CHANGE API KEY HERE
-    const API_KEY = "AIzaSyD0dx9FLxcrgczky_RYqrH2koYs0Xq_j5E"
+    const API_KEY = ""
 
     const [userLocation, setUserLocation] = useState(null);
 
