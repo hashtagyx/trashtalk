@@ -108,8 +108,8 @@ if __name__ == '__main__':
 	#updating to historical data
         db.collection("sensors").document("sensor2").collection("data").document(stringNow).set({"fill" : distance})
 	#updating current data
-        db.collection("sensors").document("sensor2").set({"fillPercent" : distance,"latitude" : 1.3525529215105152, "longitude" : 103.68597186884016})
+        db.collection("sensors").document("sensor2").set({"fillPercent" : distance})
         # wait for next loop
-        wait = start_time + 1 - time.time()
+  	      wait = start_time + 1 - time.time()
         if wait > 0:
             time.sleep(wait)
