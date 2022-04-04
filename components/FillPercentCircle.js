@@ -1,7 +1,6 @@
 import React from 'react'
-import ProgressCircle from 'react-native-progress-circle'
 import CircularProgress from 'react-native-circular-progress-indicator';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Image } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { BarChart } from 'react-native-chart-kit'
 
@@ -15,18 +14,18 @@ const FillPercentCircle = ({ fillPercent }) => {
         return '#03AC0A'
     }
 
-    const data = {
-        labels: ["5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm",],
-        datasets: [
-            {
-                data: [70, 100, 20, 45, 28, 80, 99, 43, 30, 95, 85,]
-            },
-        ]
-    };
+    // const data = {
+    //     labels: ["5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm",],
+    //     datasets: [
+    //         {
+    //             data: [70, 100, 20, 45, 28, 80, 99, 43, 30, 95, 85,]
+    //         },
+    //     ]
+    // };
 
     return (
         <View style={styles.bottomPanel}>
-            <Swiper loadMinimal={true} loadMinimalSize={1}>
+            <Swiper>
                 <View>
                     <Text style={styles.fillPanelText}>
                         Fill Chart
@@ -40,7 +39,8 @@ const FillPercentCircle = ({ fillPercent }) => {
                         />
                     </View>
                 </View>
-                <BarChart
+                <Image source={require("../assets/barchart.jpg")} style={{height: '80%', width: '100%', marginTop: 10}}/>
+                {/* <BarChart
                     style={{
                         marginTop:20,
                         marginBottom:20,
@@ -71,7 +71,7 @@ const FillPercentCircle = ({ fillPercent }) => {
                         },
                     }}
                     verticalLabelRotation={315}
-                />
+                /> */}
             </Swiper>
         </View>
     )
