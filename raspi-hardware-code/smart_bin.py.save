@@ -104,18 +104,12 @@ if __name__ == '__main__':
 
         # send the data to firestore
         now = datetime.now()
-<<<<<<< HEAD
-        stringNow = now.isoformat()
-        db.collection("sensors").document("sensor1").collection("data").document(stringNow).set({"fill" : distance})
-        db.collection("sensors").document("sensor1").collection("current").document("mostUpdated").set({"fillPercent" : distance})
-=======
         stringNow = now.strftime("%c")
 	#updating to historical data
         db.collection("sensors").document("sensor2").collection("data").document(stringNow).set({"fill" : distance})
 	#updating current data
-        db.collection("sensors").document("sensor2").set({"fillPercent" : distance,"latitude" : 1.3525529215105152, "longitude" : 103.68597186884016})
->>>>>>> 2cc46ae8e19f9c5c800708bb1a95f332a29cbbc3
+        db.collection("sensors").document("sensor2").set({"fillPercent" : distance})
         # wait for next loop
-        wait = start_time + 1 - time.time()
+  	      wait = start_time + 1 - time.time()
         if wait > 0:
             time.sleep(wait)
