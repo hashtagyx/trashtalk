@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
         # send the data to firestore
         now = datetime.now()
-        stringNow = now.strftime("%c")
+        stringNow = now.isoformat()
         db.collection("sensors").document("sensor1").collection("data").document(stringNow).set({"fill" : distance})
         db.collection("sensors").document("sensor1").collection("current").document("mostUpdated").set({"fillPercent" : distance})
         # wait for next loop
