@@ -83,7 +83,7 @@ if __name__ == '__main__':
             print("distance: {dist:.2f} cm".format(dist=distance))
             os.system("mosquitto_pub -h beam.soracom.io -t sorapi -m '%.1f'" % (distance))
 
-        if distance <= 20.0 and distance > 0:
+        if distance <= 12.0 and distance > 0:
             if binCapacity == "Empty":
                 binCapacity = "Full"
                 print("Time to take out the garbage!")
