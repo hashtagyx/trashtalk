@@ -106,7 +106,7 @@ if __name__ == '__main__':
         now = datetime.now()
         stringNow = now.isoformat()
         db.collection("sensors").document("sensor1").collection("data").document(stringNow).set({"fill" : distance})
-        db.collection("sensors").document("sensor1").collection("current").document("mostUpdated").set({"fillPercent" : distance})
+        db.collection("sensors").document("sensor1").set({"fillPercent" : distance, "latitude" : 1.3542705139127935, "longitude" : 103.68681680968172})
         # wait for next loop
         wait = start_time + 1 - time.time()
         if wait > 0:
