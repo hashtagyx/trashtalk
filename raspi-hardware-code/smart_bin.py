@@ -83,7 +83,7 @@ if __name__ == '__main__':
             print("distance: {dist:.2f} cm".format(dist=distance))
             os.system("mosquitto_pub -h beam.soracom.io -t sorapi -m '%.1f'" % (distance))
 
-        if distance <= 20.0 and distance > 0:
+        if distance <= 12.0 and distance > 0:
             if binCapacity == "Empty":
                 binCapacity = "Full"
                 print("Time to take out the garbage!")
@@ -104,11 +104,9 @@ if __name__ == '__main__':
 
         # send the data to firestore
         now = datetime.now()
-        stringNow = now.strftime("%c")
-	#updating to historical data
-        db.collection("sensors").document("sensor2").collection("data").document(stringNow).set({"fill" : distance})
-	#updating current data
-        db.collection("sensors").document("sensor2").set({"fillPercent" : distance,"latitude" : 1.3525529215105152, "longitude" : 103.68597186884016})
+        stringNow = now.isoformat()
+        db.collection("sensors").document("sensor1").collection("data").document(stringNow).set({"fill" : distance})
+        db.collection("sensors").document("sensor1").set({"fillPercent" : distance, "latitude" : 1.3542705139127935, "longitude" : 103.68681680968172})
         # wait for next loop
         wait = start_time + 1 - time.time()
         if wait > 0:
