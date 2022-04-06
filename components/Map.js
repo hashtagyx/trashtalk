@@ -16,7 +16,7 @@ const Map = () => {
     const mapRef = React.createRef();
 
     // CHANGE API KEY HERE
-    const API_KEY = ""
+    const API_KEY = "AIzaSyB-2XBLpRu-ooqLhDGDMJfocrqlVhs9cjY"
 
     const [userLocation, setUserLocation] = useState(null);
 
@@ -58,6 +58,13 @@ const Map = () => {
         return '#03AC0A'
     }
 
+    const computeFill = (fillDistance) => {
+        if (fillDistance >= 60) return 0;
+        if (fillDistance === -1) return 0;
+        if (fillDistance === 0) return 100;
+        return Math.round((60 - fillDistance) * 100 / 60);
+    }
+
     useEffect(() => {
         if (!userLocation) return;
         firestore().collection('sensors').onSnapshot(snapshot => {
@@ -65,14 +72,22 @@ const Map = () => {
             console.log("Firestore called")
             const result = snapshot.docs.map(doc => doc.data())
             console.log(result)
+            const resultAfterComputingFill = []
             const waypointsArray = []
             for (const element of result) {
-                element.pinColor = getColor(element.fillPercent)
-                if (element.fillPercent >= 50) {
+                var fillPercent = computeFill(element.fillPercent)
+                resultAfterComputingFill.push( {
+                    latitude: element.latitude,
+                    longitude: element.longitude,
+                    fillPercent: fillPercent,
+                    pinColor: getColor(fillPercent)
+                } )
+                // element.pinColor = getColor(fillPercent)
+                if (fillPercent >= 50) {
                     waypointsArray.push({ latitude: element.latitude, longitude: element.longitude })
                 }
             }
-            setMarkers(result)
+            setMarkers(resultAfterComputingFill)
             setWaypoints(waypointsArray)
             console.log(waypoints)
             changeFarthestPoint(waypointsArray);
