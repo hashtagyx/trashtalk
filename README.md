@@ -11,10 +11,7 @@ Usage: react-native run-android
 
 Insert Google API key in these files:
 > android/app/src/main/AndroidManifest.xml (Line 28)
-
-
 > components/Map.js
-
 
 ## Tracking trash one bin at a time
 Built atop Google Maps for a robust and seamless smart bin tracking experience. Smart bin sensors are marked on the map for you to track your fleet of bin sensors. Search for smart bins in your vicinity with the integrated Google search bar.
