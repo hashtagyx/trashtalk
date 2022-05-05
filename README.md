@@ -1,9 +1,8 @@
 # TrashTalk
 
 An app to monitor your fleet of smart trashbins.
-
-![image](https://user-images.githubusercontent.com/61932721/166980235-cf2a5835-3c5d-4958-aab4-b5908111fb65.png)
-![image](https://user-images.githubusercontent.com/61932721/166980309-91a5005d-cb1b-419b-88c9-88eaad370942.png)
+<img src="https://user-images.githubusercontent.com/61932721/166980235-cf2a5835-3c5d-4958-aab4-b5908111fb65.png" width="300" height="300">
+<img src="https://user-images.githubusercontent.com/61932721/166980309-91a5005d-cb1b-419b-88c9-88eaad370942.png" width="300" height="300">
 
 
 Usage: react-native run-android
