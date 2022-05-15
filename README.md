@@ -22,8 +22,8 @@ Enjoy real-time sensor data at your fingertips, updated on the fly. Monitor the 
 Enjoy a smooth experience clearing the bins which need emptying the most. Generate the shortest path through all bins with significant trash levels, to increase the efficiency of each trip.
 <br>
 
-<br>
-Usage: react-native run-android
+## Usage
+Run react-native run-android on the command line.
 
 Insert Google API key in these files:
 > android/app/src/main/AndroidManifest.xml (Line 28)<br>
